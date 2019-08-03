@@ -49,26 +49,26 @@ namespace yo {
 
 		iterator insert                (const_iterator pos, const T& item)    noexcept;
 		iterator insert                (const_iterator pos, size_t count,
-			                            const T& item)                        noexcept;
+                                        const T& item)                        noexcept;
 		iterator insert                (const_iterator pos,
-			                            const vector<T>& other)               noexcept;
+                                        const vector<T>& other)               noexcept;
 		template<typename InputIterator>
 		iterator insert                (const_iterator pos, 
-			                            InputIterator first, 
-			                            const InputIterator& last)            noexcept;
+                                        InputIterator first, 
+                                        const InputIterator& last)            noexcept;
 
 		iterator erase                 (const_iterator pos);
 		iterator erase                 (const_iterator first, 
-			                            const_iterator last);
+                                        const_iterator last);
 
 		iterator erase_all             (const T& item)                        noexcept;
 		iterator erase_all             (const_iterator first, 
-			                            const_iterator last, const T& item)   noexcept;
+                                        const_iterator last, const T& item)   noexcept;
 
 		iterator erase_first           (const T& item)                        noexcept;
 		iterator erase_first           (const_iterator first, 
-			                            const_iterator last, 
-			                            const T& item)                        noexcept;
+                                        const_iterator last, 
+                                        const T& item)                        noexcept;
 
 		iterator begin                 ()                                     noexcept;
 		const_iterator begin           ()const                                noexcept;

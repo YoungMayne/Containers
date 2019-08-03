@@ -51,11 +51,11 @@ namespace yo {
 
 		~list                          ()                                     noexcept;
 
-		void push_back                 (const T& item)					      noexcept;
+		void push_back                 (const T& item)                        noexcept;
 		reference push_back            ()                                     noexcept;
 		void push_back_uninitialized   ()                                     noexcept;
 
-		void push_front                (const T& item)			              noexcept;
+		void push_front                (const T& item)                        noexcept;
 		reference push_front           ()                                     noexcept;
 		void push_front_uninitialized  ()                                     noexcept;
 
@@ -68,27 +68,27 @@ namespace yo {
 
 		iterator insert                (const iterator& pos, const T& item)   noexcept;
 		iterator insert                (const iterator& pos, size_t count,
-			                            const T& item)                        noexcept;
+                                        const T& item)                        noexcept;
 		iterator insert                (const iterator& pos, 
-										const list<T>& other)                 noexcept;
+                                        const list<T>& other)                 noexcept;
 		template<typename InputIterator>
 		iterator insert                (const iterator& pos, 
-									    InputIterator first, 
-										const InputIterator& last)            noexcept;
+                                        InputIterator first, 
+                                        const InputIterator& last)            noexcept;
 
 		iterator erase                 (iterator pos);
 		iterator erase                 (iterator first,
-										const iterator& last);
+                                        const iterator& last);
 
 		iterator erase_all             (const T& item)                        noexcept;
 		iterator erase_all             (const iterator& first,
-								        const iterator& last,
-								        const T& item)                        noexcept;
+                                        const iterator& last,
+                                        const T& item)                        noexcept;
 
 		iterator erase_first           (const T& item)                        noexcept;
 		iterator erase_first           (const iterator& first, 
-			                            const iterator& last,
-			                            const T& item)                        noexcept;
+                                        const iterator& last,
+                                        const T& item)                        noexcept;
 
 		iterator begin                 ()                                     noexcept;
 		const_iterator begin           ()const                                noexcept;
