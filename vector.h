@@ -29,8 +29,9 @@ namespace yo {
 		vector                         ();
 		vector                         (const std::initializer_list<T>& list) noexcept;
 		vector                         (size_t count, const T& item)          noexcept;
-		vector                         (const vector<T>& other)               noexcept;
 		vector                         (const T& item)                        noexcept;
+		template<typename Container = vector<T>>
+		vector                         (const Container & other)              noexcept;
 
 		~vector                        ()                                     noexcept;
 
@@ -50,12 +51,10 @@ namespace yo {
 		iterator insert                (const_iterator pos, const T& item)    noexcept;
 		iterator insert                (const_iterator pos, size_t count,
                                         const T& item)                        noexcept;
-		iterator insert                (const_iterator pos,
-                                        const vector<T>& other)               noexcept;
 		template<typename InputIterator>
 		iterator insert                (const_iterator pos, 
                                         InputIterator first, 
-                                        const InputIterator& last)            noexcept;
+                                        InputIterator last)                   noexcept;
 
 		iterator erase                 (const_iterator pos);
 		iterator erase                 (const_iterator first, 
@@ -87,12 +86,16 @@ namespace yo {
 		bool empty                     ()const                                noexcept;
 
 		size_t size                    ()const                                noexcept;
+		size_t max_size                ()const                                noexcept;
 		size_t capacity                ()const                                noexcept;
 
 		reference front                ();
 		reference back                 ();
 		const_reference front          ()const;
 		const_reference back           ()const;
+
+		reference random               ();
+		const_reference random         ()const;
 
 		T* data                        ()                                     noexcept;
 		const T* data                  ()const                                noexcept;
@@ -103,7 +106,8 @@ namespace yo {
 		reference operator[]           (const size_t& pos);
 		const_reference operator[]     (const size_t& pos)const;
 
-		vector<T>& operator=           (const vector<T>& other)               noexcept;
+		template<typename Container = vector<T>>
+		vector<T>& operator=           (const Container& other)               noexcept;
 	protected:
 		size_t SIZE;
 		size_t CAP;
@@ -125,10 +129,9 @@ namespace yo {
 
 	template<typename T, size_t _capacity>
 	inline vector<T, _capacity>::vector(const std::initializer_list<T>& list) noexcept : vector() {
-		size_t index = 0;
-		resize(list.size());
+		reserve(list.size());
 		for (const T& item : list) {
-			elems[index++] = item;
+			elems[SIZE++] = item;
 		}
 	}
 
@@ -143,7 +146,8 @@ namespace yo {
 
 
 	template<typename T, size_t _capacity>
-	inline vector<T, _capacity>::vector(const vector<T>& other) noexcept : vector() {
+	template<typename Container>
+	inline vector<T, _capacity>::vector(const Container& other) noexcept : vector() {
 		*this = other;
 	}
 
@@ -266,17 +270,8 @@ namespace yo {
 
 
 	template<typename T, size_t _capacity>
-	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::insert(const_iterator pos, const vector<T>& other) noexcept {
-		for (const auto& item : other) {
-			pos = insert(pos, item);
-		}
-		return (iterator)pos;
-	}
-
-
-	template<typename T, size_t _capacity>
 	template<typename InputIterator>
-	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::insert(const_iterator pos, InputIterator first, const InputIterator& last) noexcept {
+	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::insert(const_iterator pos, InputIterator first, InputIterator last) noexcept {
 		while (first != last) {
 			pos = insert(pos, *first++);
 		}
@@ -302,17 +297,19 @@ namespace yo {
 	template<typename T, size_t _capacity>
 	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::erase(const_iterator first, const_iterator last) {
 		YO_ASSERT_THROW(first == end(), "Incorrect position");
+
 		while (first != last) {
 			size_t diff = last - elems;
 			first = erase(first);
 			last = elems + diff - 1;
 		}
+
 		return (iterator)first;
 	}
 
 
 	template<typename T, size_t _capacity>
-	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::erase_all(const T& item) noexcept	{
+	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::erase_all(const T& item) noexcept {
 		return erase_all(begin(), end(), item);
 	}
 
@@ -343,7 +340,7 @@ namespace yo {
 	inline typename vector<T, _capacity>::iterator vector<T, _capacity>::erase_first(const_iterator first, const_iterator last, const T& item) noexcept {
 		iterator i = (iterator)yo::find_first(first, last, item);
 
-		if (i != end()) {
+		if (i != last) {
 			return erase(i);
 		}
 
@@ -436,6 +433,12 @@ namespace yo {
 
 
 	template<typename T, size_t _capacity>
+	inline size_t vector<T, _capacity>::max_size() const noexcept {
+		return (size_t)-1;
+	}
+
+
+	template<typename T, size_t _capacity>
 	inline size_t vector<T, _capacity>::capacity() const noexcept {
 		return CAP;
 	}
@@ -465,6 +468,20 @@ namespace yo {
 	inline typename vector<T, _capacity>::const_reference vector<T, _capacity>::back() const {
 		YO_ASSERT_THROW(SIZE == 0, "Empty vector");
 		return elems[SIZE - 1];
+	}
+
+
+	template<typename T, size_t _capacity>
+	inline typename vector<T, _capacity>::reference vector<T, _capacity>::random()	{
+		YO_ASSERT_THROW(SIZE == 0, "Empty vector");
+		return elems[yo::random<size_t>(0, size() - 1)];
+	}
+
+
+	template<typename T, size_t _capacity>
+	inline typename vector<T, _capacity>::const_reference vector<T, _capacity>::random() const {
+		YO_ASSERT_THROW(SIZE == 0, "Empty vector");
+		return elems[yo::random<size_t>(0, size() - 1)];
 	}
 
 
@@ -509,12 +526,12 @@ namespace yo {
 
 
 	template<typename T, size_t _capacity>
-	inline vector<T>& vector<T, _capacity>::operator=(const vector<T>& other) noexcept {
-		if (this != &other) {
-			resize(other.size());
-			for (size_t i = 0; i < SIZE; ++i) {
-				elems[i] = other[i];
-			}
+	template<typename Container>
+	inline vector<T>& vector<T, _capacity>::operator=(const Container& other) noexcept {
+		SIZE = 0;
+		reserve(other.size());
+		for (const auto& item : other) {
+			elems[SIZE++] = item;
 		}
 		return *this;
 	}
@@ -573,13 +590,21 @@ namespace yo {
 
 	template<typename T>
 	inline bool operator>=(const vector<T>& left, const vector<T>& right) {
-		return yo::compare(left.begin(), right.begin(), left.end(), right.end()) >= 0;
+		short result = yo::compare(left.begin(), right.begin(), left.end(), right.end());
+		if (result == 0) {
+			return left.size() == right.size();
+		}
+		return result == 1;
 	}
 
 
 	template<typename T>
 	inline bool operator<=(const vector<T>& left, const vector<T>& right) {
-		return yo::compare(left.begin(), right.begin(), left.end(), right.end()) <= 0;
+		short result = yo::compare(left.begin(), right.begin(), left.end(), right.end());
+		if (result == 0) {
+			return left.size() == right.size();
+		}
+		return result == -1;
 	}
 
 

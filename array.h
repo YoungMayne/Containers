@@ -28,12 +28,13 @@ namespace yo {
 	public:
 		array                          ()                                      noexcept;
 		array                          (const std::initializer_list<T>& list);
-		array                          (const array<T, SIZE>& other)           noexcept;
 		array                          (const T& item)                         noexcept;
+		template<typename Container = array<T, SIZE>>
+		array                          (const Container& other);
 
 		void fill                      (const T& item)                         noexcept;
 		void reverse                   ()                                      noexcept;
-		void emplace                   (const iterator& it, const T& item)     noexcept;
+		void emplace                   (iterator pos, const T& item)           noexcept;
 		void swap                      (array<T, SIZE>& other)                 noexcept;
 
 		iterator begin                 ()                                      noexcept;
@@ -56,11 +57,15 @@ namespace yo {
 		bool empty                     ()const                                 noexcept;
 
 		size_t size                    ()const                                 noexcept;
+		size_t max_size                ()const                                 noexcept;
 
 		reference front                ();
 		reference back                 ();
 		const_reference front          ()const;
 		const_reference back           ()const;
+
+		reference random               ();
+		const_reference random         ()const;
 
 		reference at                   (const size_t& pos);
 		const_reference at             (const size_t& pos)const;
@@ -68,7 +73,8 @@ namespace yo {
 		reference operator[]           (const size_t n);
 		const_reference operator[]     (const size_t n)const;
 
-		array<T, SIZE>& operator=      (const array<T, SIZE>& other)           noexcept;
+		template<typename Container = array<T, SIZE>>
+		array<T, SIZE>& operator=      (const Container& other);
 	protected:
 		T elems[SIZE == 0 ? 1 : SIZE];
 	};
@@ -89,7 +95,9 @@ namespace yo {
 
 
 	template<typename T, size_t SIZE>
-	inline array<T, SIZE>::array(const array<T, SIZE>& other) noexcept {
+	template<typename Container>
+	inline array<T, SIZE>::array(const Container& other) {
+		YO_ASSERT_THROW(other.size() > SIZE, "Out of bounds");
 		*this = other;
 	}
 
@@ -119,7 +127,7 @@ namespace yo {
 
 
 	template<typename T, size_t SIZE>
-	inline void array<T, SIZE>::emplace(const iterator& it, const T& item) noexcept	{
+	inline void array<T, SIZE>::emplace(iterator it, const T& item) noexcept {
 		*it = item;
 	}
 
@@ -229,6 +237,12 @@ namespace yo {
 
 
 	template<typename T, size_t SIZE>
+	inline size_t array<T, SIZE>::max_size() const noexcept {
+		return SIZE;
+	}
+
+
+	template<typename T, size_t SIZE>
 	inline typename array<T, SIZE>::reference array<T, SIZE>::front() {
 		YO_ASSERT_THROW(SIZE == 0, "Empty array");
 		return elems[0];
@@ -253,6 +267,20 @@ namespace yo {
 	inline typename array<T, SIZE>::const_reference array<T, SIZE>::back() const {
 		YO_ASSERT_THROW(SIZE == 0, "Empty array");
 		return elems[SIZE - 1];
+	}
+
+
+	template<typename T, size_t SIZE>
+	inline typename array<T, SIZE>::reference array<T, SIZE>::random() {
+		YO_ASSERT_THROW(SIZE == 0, "Empty array");
+		return elems[yo::random<size_t>(0, size() - 1)];
+	}
+
+
+	template<typename T, size_t SIZE>
+	inline typename array<T, SIZE>::const_reference array<T, SIZE>::random() const {
+		YO_ASSERT_THROW(SIZE == 0, "Empty array");
+		return elems[yo::random<size_t>(0, size() - 1)];
 	}
 
 
@@ -285,9 +313,12 @@ namespace yo {
 
 
 	template<typename T, size_t SIZE>
-	inline array<T, SIZE>& array<T, SIZE>::operator=(const array<T, SIZE>& other) noexcept {
-		for (size_t i = 0; i < SIZE; ++i) {
-			elems[i] = other[i];
+	template<typename Container>
+	inline array<T, SIZE>& array<T, SIZE>::operator=(const Container& other) {
+		YO_ASSERT_THROW(other.size() > SIZE, "Out of bounds");
+		size_t index = 0;
+		for (const auto& item : other) {
+			elems[index++] = item;
 		}
 		return *this;
 	}
