@@ -68,7 +68,7 @@ namespace yo {
 	template<typename T, typename Pointer, typename Reference, typename Iterator>
 	inline typename reverse_iterator<T, Pointer, Reference, Iterator>::iterator reverse_iterator<T, Pointer, Reference, Iterator>::operator++(int) noexcept {
 		iterator temp(*this);
-		++(*this);
+		operator++();
 		return temp;
 	}
 
@@ -83,7 +83,7 @@ namespace yo {
 	template<typename T, typename Pointer, typename Reference, typename Iterator>
 	inline typename reverse_iterator<T, Pointer, Reference, Iterator>::iterator reverse_iterator<T, Pointer, Reference, Iterator>::operator--(int) noexcept {
 		iterator temp(*this);
-		--(*this);
+		operator--();
 		return temp;
 	}
 

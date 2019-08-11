@@ -60,7 +60,7 @@ namespace yo {
 	template<typename T, typename Pointer, typename Reference>
 	inline typename list_iterator<T, Pointer, Reference>::iterator list_iterator<T, Pointer, Reference>::operator++(int) noexcept {
 		iterator temp(*this);
-		++(*this);
+		operator++();
 		return temp;
 	}
 
@@ -75,7 +75,7 @@ namespace yo {
 	template<typename T, typename Pointer, typename Reference>
 	inline typename list_iterator<T, Pointer, Reference>::iterator list_iterator<T, Pointer, Reference>::operator--(int) noexcept	{
 		iterator temp(*this);
-		++(*this);
+		operator--();
 		return temp;
 	}
 

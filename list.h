@@ -47,6 +47,7 @@ namespace yo {
 		list                           (const std::initializer_list<T>& list) noexcept;
 		list                           (size_t count, const T& item)          noexcept;
 		list                           (const T& item)                        noexcept;
+		list                           (const list<T>& other)                 noexcept;
 		template<typename Container = list<T>>
 		list                           (const Container & other)              noexcept;
 
@@ -114,6 +115,7 @@ namespace yo {
 		reference random               ();
 		const_reference random         ()const;
 		
+		list<T>& operator=             (const list<T>& other)                 noexcept;
 		template<typename Container = list<T>>
 		list<T>& operator=             (const Container& other)               noexcept;
 	protected:
@@ -162,6 +164,12 @@ namespace yo {
 	template<typename T>
 	inline list<T>::list(const T& item) noexcept : list() {
 		push_back() = item;
+	}
+
+
+	template<typename T>
+	inline list<T>::list(const list<T>& other) noexcept : list() {
+		*this = other;
 	}
 
 
@@ -538,6 +546,18 @@ namespace yo {
 		}
 
 		return *result;
+	}
+
+
+	template<typename T>
+	inline list<T>& list<T>::operator=(const list<T>& other) noexcept {
+		if (this != &other) {
+			clear();
+			for (const auto& item : other) {
+				push_back(item);
+			}
+		}
+		return *this;
 	}
 
 

@@ -1,13 +1,12 @@
 #pragma once
 
 
-#include <initializer_list>
-
-
 #ifndef YO_ASSERT_THROW
 #define YO_ASSERT_THROW(statement, message) if(statement == true) throw message
 #endif 
 
+
+#include <initializer_list>
 
 #include "iterators/reverse_iterator.h"
 
@@ -36,7 +35,7 @@ namespace yo {
 		void reverse                   ()                                      noexcept;
 		void emplace                   (iterator pos, const T& item)           noexcept;
 		void swap                      (array<T, SIZE>& other)                 noexcept;
-
+		
 		iterator begin                 ()                                      noexcept;
 		const_iterator begin           ()const                                 noexcept;
 		const_iterator cbegin          ()const                                 noexcept;

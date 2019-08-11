@@ -29,6 +29,7 @@ namespace yo {
 		vector                         ();
 		vector                         (const std::initializer_list<T>& list) noexcept;
 		vector                         (size_t count, const T& item)          noexcept;
+		vector                         (const vector<T>& other)               noexcept;
 		vector                         (const T& item)                        noexcept;
 		template<typename Container = vector<T>>
 		vector                         (const Container & other)              noexcept;
@@ -106,6 +107,7 @@ namespace yo {
 		reference operator[]           (const size_t& pos);
 		const_reference operator[]     (const size_t& pos)const;
 
+		vector<T>& operator=           (const vector<T>& other)               noexcept;
 		template<typename Container = vector<T>>
 		vector<T>& operator=           (const Container& other)               noexcept;
 	protected:
@@ -146,8 +148,7 @@ namespace yo {
 
 
 	template<typename T, size_t _capacity>
-	template<typename Container>
-	inline vector<T, _capacity>::vector(const Container& other) noexcept : vector() {
+	inline vector<T, _capacity>::vector(const vector<T>& other) noexcept : vector() {
 		*this = other;
 	}
 
@@ -155,6 +156,13 @@ namespace yo {
 	template<typename T, size_t _capacity>
 	inline vector<T, _capacity>::vector(const T& item) noexcept : vector() {
 		push_back(item);
+	}
+
+
+	template<typename T, size_t _capacity>
+	template<typename Container>
+	inline vector<T, _capacity>::vector(const Container& other) noexcept : vector() {
+		*this = other;
 	}
 
 
@@ -522,6 +530,19 @@ namespace yo {
 	inline typename vector<T, _capacity>::const_reference vector<T, _capacity>::operator[](const size_t& pos) const {
 		YO_ASSERT_THROW(pos >= SIZE, "Out of range");
 		return elems[pos];
+	}
+
+
+	template<typename T, size_t _capacity>
+	inline vector<T>& vector<T, _capacity>::operator=(const vector<T>& other) noexcept {
+		if (this != &other) {
+			SIZE = 0;
+			reserve(other.size());
+			for (const auto& item : other) {
+				elems[SIZE++] = item;
+			}
+		}
+		return *this;
 	}
 
 
