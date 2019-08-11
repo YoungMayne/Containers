@@ -27,6 +27,7 @@ namespace yo {
 	public:
 		array                          ()                                      noexcept;
 		array                          (const std::initializer_list<T>& list);
+		array                          (const array<T, SIZE>& other)           noexcept;
 		array                          (const T& item)                         noexcept;
 		template<typename Container = array<T, SIZE>>
 		array                          (const Container& other);
@@ -72,6 +73,7 @@ namespace yo {
 		reference operator[]           (const size_t n);
 		const_reference operator[]     (const size_t n)const;
 
+		array<T, SIZE>& operator=      (const array<T, SIZE>& other)          noexcept;
 		template<typename Container = array<T, SIZE>>
 		array<T, SIZE>& operator=      (const Container& other);
 	protected:
@@ -94,9 +96,7 @@ namespace yo {
 
 
 	template<typename T, size_t SIZE>
-	template<typename Container>
-	inline array<T, SIZE>::array(const Container& other) {
-		YO_ASSERT_THROW(other.size() > SIZE, "Out of bounds");
+	inline array<T, SIZE>::array(const array<T, SIZE>& other) noexcept {
 		*this = other;
 	}
 
@@ -104,6 +104,14 @@ namespace yo {
 	template<typename T, size_t SIZE>
 	inline array<T, SIZE>::array(const T& item) noexcept {
 		fill(item);
+	}
+
+
+	template<typename T, size_t SIZE>
+	template<typename Container>
+	inline array<T, SIZE>::array(const Container& other) {
+		YO_ASSERT_THROW(other.size() > SIZE, "Out of bounds");
+		*this = other;
 	}
 
 
@@ -308,6 +316,15 @@ namespace yo {
 	inline  typename array<T, SIZE>::const_reference array<T, SIZE>::operator[](const size_t n) const {
 		YO_ASSERT_THROW(n >= SIZE, "Out of range");
 		return elems[n];
+	}
+
+
+	template<typename T, size_t SIZE>
+	inline array<T, SIZE>& array<T, SIZE>::operator=(const array<T, SIZE>& other) noexcept {
+		for (size_t i = 0; i < SIZE; ++i) {
+			elems[i] = other[i];
+		}
+		return *this;
 	}
 
 

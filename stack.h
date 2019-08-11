@@ -18,48 +18,48 @@ namespace yo {
 	template<typename T, size_t MAX_SIZE = 100>
 	class stack {
 	public:
-		typedef T                                                             value;
-		typedef T*                                                            pointer;
-		typedef const T*                                                      const_pointer;
-		typedef const T*                                                      iterator;
-		typedef T&                                                            reference;
-		typedef const T&                                                      const_reference;
-		typedef reverse_iterator<value, pointer, const_reference, iterator>   reverse_iterator;
+		typedef T                                                                 value;
+		typedef T*                                                                pointer;
+		typedef const T*                                                          const_pointer;
+		typedef const T*                                                          iterator;
+		typedef T&                                                                reference;
+		typedef const T&                                                          const_reference;
+		typedef reverse_iterator<value, pointer, const_reference, iterator>       reverse_iterator;
 	public:
-		stack                     ()                                          noexcept;
-		stack                     (const std::initializer_list<value>& list);
-		stack                     (const value& item);
-
+		stack                         ()                                          noexcept;
+		stack                         (const std::initializer_list<value>& list);
+		stack                         (const stack<T, MAX_SIZE>& other)           noexcept;
+		stack                         (const value& item);
 		template<typename Container = stack<T, MAX_SIZE>>
-		stack                     (const Container& other);
+		stack                         (const Container& other);
 
-		void push                 (const T& item);
-		reference push            ();
+		void push                     (const T& item);
+		reference push                ();
 
-		void swap                 (stack<T, MAX_SIZE>& other)                 noexcept;
-		void clear                ()                                          noexcept;
+		void swap                     (stack<T, MAX_SIZE>& other)                 noexcept;
+		void clear                    ()                                          noexcept;
 
-		const_reference pop       ();
+		const_reference pop           ();
 
-		reference top             ()                                          noexcept;
-		const_reference top       ()const                                     noexcept;
+		reference top                 ()                                          noexcept;
+		const_reference top           ()const                                     noexcept;
 
-		const_pointer data        ()const                                     noexcept;
+		const_pointer data            ()const                                     noexcept;
 
-		iterator begin            ()const                                     noexcept;
-		iterator end              ()const                                     noexcept;
+		iterator begin                ()const                                     noexcept;
+		iterator end                  ()const                                     noexcept;
 
-		reverse_iterator rbegin   ()const                                     noexcept;
-		reverse_iterator rend     ()const                                     noexcept;
+		reverse_iterator rbegin       ()const                                     noexcept;
+		reverse_iterator rend         ()const                                     noexcept;
 
-		size_t size               ()const                                     noexcept;
-		size_t max_size           ()const                                     noexcept;
+		size_t size                   ()const                                     noexcept;
+		size_t max_size               ()const                                     noexcept;
 
-		bool empty                ()const                                     noexcept;
+		bool empty                    ()const                                     noexcept;
 
+		stack<T, MAX_SIZE>& operator= (const stack<T, MAX_SIZE>& other)           noexcept;
 		template<typename Container = stack<T, MAX_SIZE>>
-		stack<T, MAX_SIZE>& 
-		                operator= (const Container& other);
+		stack<T, MAX_SIZE>& operator= (const Container& other);
 	protected:
 		size_t  SIZE;
 		value   elems[MAX_SIZE == 0 ? 1 : MAX_SIZE];
@@ -78,6 +78,12 @@ namespace yo {
 		for (const auto& item : list) {
 			elems[SIZE++] = item;
 		}
+	}
+
+
+	template<typename T, size_t MAX_SIZE>
+	inline stack<T, MAX_SIZE>::stack(const stack<T, MAX_SIZE>& other) noexcept : stack() {
+		*this = other;
 	}
 
 
@@ -189,6 +195,15 @@ namespace yo {
 	template<typename T, size_t MAX_SIZE>
 	inline bool stack<T, MAX_SIZE>::empty() const noexcept {
 		return SIZE == 0;
+	}
+
+
+	template<typename T, size_t MAX_SIZE>
+	inline stack<T, MAX_SIZE>& stack<T, MAX_SIZE>::operator=(const stack<T, MAX_SIZE>& other) noexcept {
+		for (SIZE = 0; SIZE < other.size(); ++SIZE) {
+			elems[SIZE] = other.elems[SIZE];
+		}
+		return *this;
 	}
 
 
