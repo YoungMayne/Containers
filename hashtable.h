@@ -63,6 +63,7 @@ namespace yo {
 		void rehash               (size_type maxbuckets)                         noexcept;
 		void reserve              (size_type maxbuckets)                         noexcept;
 		void clear                ()                                             noexcept;
+		void swap                 (this_type& other)                             noexcept;
 
 		iterator begin            ()                                             noexcept;
 		const_iterator begin      ()const                                        noexcept;
@@ -144,6 +145,7 @@ namespace yo {
 	template<typename Key, typename Value>
 	inline hashtable<Key, Value>::~hashtable() noexcept {
 		bucket_free(elems);
+		delete end_ptr;
 	}
 
 
@@ -284,6 +286,16 @@ namespace yo {
 		}
 		SIZE = 0;
 		elems = b;
+	}
+
+
+	template<typename Key, typename Value>
+	inline void hashtable<Key, Value>::swap(this_type& other) noexcept {
+		yo::swap(BUCKET_SIZE, other.BUCKET_SIZE);
+		yo::swap(max_factor, other.max_factor);
+		yo::swap(end_ptr, other.end_ptr);
+		yo::swap(elems, other.elems);
+		yo::swap(SIZE, other.SIZE);
 	}
 
 
@@ -616,6 +628,10 @@ namespace yo {
 	void swap(hashtable<Key, Value>& left, hashtable<Key, Value>& right) {
 		left.swap(right);
 	}
+
+
+	template<typename Key, typename Value>
+	using unordered_map = hashtable<Key, Value>;
 
 
 }
