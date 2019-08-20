@@ -5,6 +5,7 @@
 #define YO_ASSERT_THROW(statement, message) if(statement == true) throw message
 #endif 
 
+#define YO_LIST_SIZE_CACHE
 
 #include <initializer_list>
 
@@ -67,6 +68,9 @@ namespace yo {
 		void clear                     ()                                     noexcept;
 		void emplace                   (iterator pos, const T& item)          noexcept;
 		void swap                      (list<value>& other)                   noexcept;
+
+		iterator find                  (const T& item)                        noexcept;
+		const_iterator find            (const T& item)const                   noexcept;
 
 		iterator insert                (const iterator& pos, const T& item)   noexcept;
 		iterator insert                (const iterator& pos, size_t count,
@@ -284,6 +288,32 @@ namespace yo {
 #ifdef YO_LIST_SIZE_CACHE
 		yo::swap(SIZE, other.SIZE);
 #endif
+	}
+
+
+	template<typename T>
+	inline typename list<T>::iterator list<T>::find(const T& item) noexcept {
+		pointer_type first = pFront;
+		pBack->item = item;
+
+		while (first->item != item) {
+			first = first->next;
+		}
+
+		return first;
+	}
+
+
+	template<typename T>
+	inline typename list<T>::const_iterator list<T>::find(const T& item) const noexcept {
+		pointer_type first = pFront;
+		pBack->item = item;
+
+		while (first->item != item) {
+			first = first->next;
+		}
+
+		return first;
 	}
 
 

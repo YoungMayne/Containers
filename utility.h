@@ -30,7 +30,7 @@ namespace yo {
 
 
 	template<typename Iterator, typename T>
-	Iterator find_first(Iterator first, const Iterator& last, const T& value) {
+	Iterator find_first(Iterator first, Iterator last, const T& value) {
 		while (first != last) {
 			if (*first == value) {
 				return first;
